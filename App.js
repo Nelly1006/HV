@@ -8,6 +8,8 @@ import PantallaSiembraInteligente from './src/screens/PantallaSiembraInteligente
 import PantallaCuidadoSuelo from './src/screens/PantallaCuidadoSuelo';
 import PantallaRiegoEficiente from './src/screens/PantallaRiegoEficiente';
 import PantallaCosechaSostenible from './src/screens/PantallaCosechaSostenible';
+import PantallaPlanCosecha from './src/screens/PantallaPlanCosecha';
+import PantallaAjustarPlanCosecha from './src/screens/PantallaAjustarPlanCosecha';
 
 const Stack = createStackNavigator();
 
@@ -67,6 +69,20 @@ export default function App() {
         <Stack.Screen
           name="CosechaSostenible"
           component={PantallaCosechaSostenible}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="PlanCosecha"
+          component={PantallaPlanCosecha}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="AjustarPlanCosecha"
+          component={PantallaAjustarPlanCosecha}
           options={{
             headerShown: false,
           }}
