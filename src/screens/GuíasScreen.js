@@ -43,7 +43,19 @@ export default function GuíasScreen({ navigation }) {
             delay={parseInt(guide.id) * 200}
             style={styles.card}
           >
-            <TouchableOpacity onPress={() => alert(`Abrir ${guide.title}`)}>
+            <TouchableOpacity
+              onPress={() => {
+                if (guide.title === 'Siembra Inteligente') {
+                  navigation.navigate('SiembraInteligente');
+                } else if (guide.title === 'Cuidado del Suelo') {
+                  navigation.navigate('CuidadoSuelo');
+                } else if (guide.title === 'Riego Eficiente') {
+                  navigation.navigate('RiegoEficiente');
+                } else if (guide.title === 'Cosecha Sostenible') {
+                  navigation.navigate('CosechaSostenible');
+                }
+              }}
+            >
               <Text style={styles.cardTitle}>{guide.title}</Text>
               <Text style={styles.cardDescription}>{guide.description}</Text>
             </TouchableOpacity>
@@ -52,7 +64,7 @@ export default function GuíasScreen({ navigation }) {
         <Animatable.View animation="fadeInUp" duration={800} delay={1000} style={styles.pestSection}>
           <TouchableOpacity
             style={styles.pestButton}
-            onPress={() => alert('Iniciar detección de plagas')}
+            onPress={() => navigation.navigate('DeteccionPlagas')}
           >
             <LinearGradient
               colors={['#4CAF50', '#81C784']}
