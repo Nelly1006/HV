@@ -4,12 +4,12 @@ import HomeScreen from './src/screens/HomeScreen';
 import GuíasScreen from './src/screens/GuíasScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import PantallaDeteccionPlagas from './src/screens/PantallaDeteccionPlagas';
-import PantallaSiembraInteligente from './src/screens/PantallaSiembraInteligente';
-import PantallaCuidadoSuelo from './src/screens/PantallaCuidadoSuelo';
-import PantallaRiegoEficiente from './src/screens/PantallaRiegoEficiente';
-import PantallaCosechaSostenible from './src/screens/PantallaCosechaSostenible';
-import PantallaPlanCosecha from './src/screens/PantallaPlanCosecha';
-import PantallaAjustarPlanCosecha from './src/screens/PantallaAjustarPlanCosecha';
+import PantallaSiembraInteligente from './src/screens/DeteccionPlagas';
+import LoginScreen from './src/screens/LoginScreen';
+import CosechaHidropónica from './src/screens/CosechaHidropónica';
+import RiegoHidropónico from './src/screens/RiegoHidropónico';
+import CultivoLechuga from './src/screens/CultivoLechuga';
+import CultivoTomate from './src/screens/CultivoTomate';
 
 const Stack = createStackNavigator();
 
@@ -53,36 +53,36 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          name="CuidadoSuelo"
-          component={PantallaCuidadoSuelo}
+          name="LoginScreen"
+          component={LoginScreen}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="RiegoEficiente"
-          component={PantallaRiegoEficiente}
+          name="CosechaHidropónica"
+          component={CosechaHidropónica}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="CosechaSostenible"
-          component={PantallaCosechaSostenible}
+          name="RiegoHidropónico"
+          component={RiegoHidropónico}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="PlanCosecha"
-          component={PantallaPlanCosecha}
+          name="CultivoLechuga"
+          component={CultivoLechuga}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="AjustarPlanCosecha"
-          component={PantallaAjustarPlanCosecha}
+          name="CultivoTomate"
+          component={CultivoTomate}
           options={{
             headerShown: false,
           }}
