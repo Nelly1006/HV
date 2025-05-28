@@ -16,7 +16,6 @@
     "expo-camera": "~16.1.6",
     "expo-document-picker": "^13.1.5",
     "expo-linear-gradient": "~14.1.4",
-    "expo-permissions": "^14.4.0",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
     "react-native": "0.79.2",

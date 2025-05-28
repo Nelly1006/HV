@@ -1,87 +1,104 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Switch, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, Linking, Switch, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Animatable from 'react-native-animatable';
 
-const { height, width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
-  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const handleLogin = () => {
-    console.log('Intentando iniciar sesión con:', { email, password });
-    // Aquí podrías implementar la lógica de autenticación
+    if (email === 'user@hidrovida.com' && password === 'hidrovida123') {
+      Alert.alert('Éxito', '¡Has iniciado sesión en Hidrovida!');
+      navigation.navigate('Guías');
+    } else {
+      Alert.alert('Error', 'Correo o contraseña incorrectos');
+    }
+  };
+
+  const handleGuestAccess = () => {
+    Alert.alert('Acceso de Invitado', 'Estás entrando como invitado. Algunas funciones estarán limitadas.');
     navigation.navigate('Guías');
+  };
+
+  const handleRegister = () => {
+    Alert.alert('Registro', 'Función de registro en desarrollo. Visita nuestro sitio para más información.');
+    Linking.openURL('https://hidrovida.com/register'); // Placeholder para el enlace real
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Animatable.View animation="fadeInDown" duration={1200} style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButtonContainer}>
-            <Text style={styles.backButton}>←</Text>
-          </TouchableOpacity>
-          <View style={styles.titleContainer}>
-            <Text style={styles.headerTitle}>Iniciar Sesión</Text>
-          </View>
-        </Animatable.View>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Text style={styles.backText}>←</Text>
+      </TouchableOpacity>
+      <View style={styles.content}>
+        <Text style={styles.title}>Hidrovida - Iniciar Sesión</Text>
 
-        {/* Formulario de Login */}
-        <Animatable.View animation="fadeInUp" duration={1200} delay={300} style={styles.formContainer}>
-          <Text style={styles.sectionTitle}>Accede a tu Cuenta</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Correo Electrónico"
-            placeholderTextColor="#888888"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Contraseña"
-            placeholderTextColor="#888888"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.8}>
-            <LinearGradient
-              colors={['#1A3C34', '#4CAF50']}
-              style={styles.buttonGradient}
-            >
-              <Text style={styles.buttonText}>Iniciar Sesión</Text>
-            </LinearGradient>
+        {/* Sección de Planes */}
+        <View style={styles.plansSection}>
+          <Text style={styles.sectionTitle}>Planes de Hidrovida</Text>
+          <Text style={styles.planText}>
+            - <Text style={styles.planHighlight}>Gratis</Text>: Acceso básico a guías y detección de plagas (limitado).
+          </Text>
+          <Text style={styles.planText}>
+            - <Text style={styles.planHighlight}>Premium Mensual</Text>: $30 MXN/mes - Acceso completo a guías, detección avanzada de plagas y soporte prioritario.
+          </Text>
+          <Text style={styles.planText}>
+            - <Text style={styles.planHighlight}>Premium Anual</Text>: $300 MXN/año (aproximado) - Ahorra un 16% frente al plan mensual.
+          </Text>
+          <TouchableOpacity onPress={handleGuestAccess} style={styles.guestButton}>
+            <Text style={styles.guestText}>Entrar como Invitado</Text>
           </TouchableOpacity>
-        </Animatable.View>
+        </View>
 
-        {/* Sección de Configuración */}
-        <Animatable.View animation="fadeInUp" duration={1200} delay={600} style={styles.settingsContainer}>
-          <Text style={styles.sectionTitle}>Configuración</Text>
-          <View style={styles.settingItem}>
-            <Text style={styles.settingText}>Tema Oscuro</Text>
+        {/* Formulario de Inicio de Sesión */}
+        <TextInput
+          style={styles.input}
+          placeholder="Correo Electrónico"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholderTextColor="#999"
+        />
+        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <LinearGradient colors={['#1A3C34', '#4CAF50']} style={styles.gradient}>
+            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
+          <LinearGradient colors={['#4CAF50', '#1A3C34']} style={styles.gradient}>
+            <Text style={styles.buttonText}>Registrarse</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => Alert.alert('Opción', 'Función de "Olvidé mi contraseña" en desarrollo')}>
+          <Text style={styles.forgotText}>¿Olvidaste tu contraseña?</Text>
+        </TouchableOpacity>
+
+        {/* Sección de Configuraciones */}
+        <View style={styles.settingsSection}>
+          <Text style={styles.sectionTitle}>Configuraciones</Text>
+          <View style={styles.settingRow}>
+            <Text style={styles.settingText}>Activar Notificaciones</Text>
             <Switch
-              value={isDarkTheme}
-              onValueChange={setIsDarkTheme}
-              trackColor={{ false: '#D3D3D3', true: '#4CAF50' }}
-              thumbColor={isDarkTheme ? '#FFFFFF' : '#F5F5F5'}
+              trackColor={{ false: '#767577', true: '#4CAF50' }}
+              thumbColor={notificationsEnabled ? '#FFFFFF' : '#F4F3F4'}
+              onValueChange={setNotificationsEnabled}
+              value={notificationsEnabled}
             />
           </View>
-          <View style={styles.settingItem}>
-            <Text style={styles.settingText}>Notificaciones</Text>
-            <Switch
-              value={isNotificationsEnabled}
-              onValueChange={setIsNotificationsEnabled}
-              trackColor={{ false: '#D3D3D3', true: '#4CAF50' }}
-              thumbColor={isNotificationsEnabled ? '#FFFFFF' : '#F5F5F5'}
-            />
-          </View>
-        </Animatable.View>
-      </ScrollView>
+        </View>
+      </View>
     </View>
   );
 }
@@ -89,118 +106,126 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF', // Fondo blanco
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingVertical: 50,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingBottom: 40,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingBottom: 20,
-    marginBottom: 30,
-    justifyContent: 'space-between',
-  },
-  backButtonContainer: {
-    padding: 10,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    elevation: 5,
   },
   backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    padding: 10,
+  },
+  backText: {
     fontSize: 24,
     color: '#1A3C34',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
-  titleContainer: {
-    flex: 1,
+  content: {
     alignItems: 'center',
-    marginRight: 40,
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: '900',
-    color: '#1A3C34',
-    textAlign: 'center',
-    letterSpacing: 1.5,
-  },
-  formContainer: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 25,
-    padding: 20,
-    marginBottom: 20,
+    padding: 25,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  sectionTitle: {
-    fontSize: 28,
+  title: {
+    fontSize: 34,
     fontWeight: '800',
     color: '#1A3C34',
-    textAlign: 'center',
     marginBottom: 20,
-    textTransform: 'uppercase',
-    letterSpacing: 1.5,
+    textAlign: 'center',
+  },
+  plansSection: {
+    marginBottom: 25,
+    width: '100%',
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1A3C34',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  planText: {
+    fontSize: 14,
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  planHighlight: {
+    fontWeight: '700',
+    color: '#4CAF50',
+  },
+  guestButton: {
+    marginTop: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    backgroundColor: '#E0E0E0',
+  },
+  guestText: {
+    fontSize: 14,
+    color: '#1A3C34',
+    fontWeight: '600',
   },
   input: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
-    padding: 15,
+    width: '100%',
+    height: 50,
+    backgroundColor: '#F9F9F9',
+    borderRadius: 10,
+    paddingHorizontal: 15,
     marginBottom: 15,
     fontSize: 16,
-    color: '#333333',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    color: '#333',
+    elevation: 2,
   },
   loginButton: {
-    borderRadius: 35,
+    width: '100%',
+    borderRadius: 10,
     overflow: 'hidden',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
+    marginTop: 20,
   },
-  buttonGradient: {
-    paddingVertical: 16,
-    paddingHorizontal: 50,
-    borderRadius: 35,
+  registerButton: {
+    width: '100%',
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginTop: 10,
+  },
+  gradient: {
+    paddingVertical: 12,
     alignItems: 'center',
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '600',
     textTransform: 'uppercase',
-    letterSpacing: 2,
   },
-  settingsContainer: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 25,
-    padding: 20,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+  forgotText: {
+    marginTop: 15,
+    fontSize: 14,
+    color: '#4CAF50',
+    textDecorationLine: 'underline',
   },
-  settingItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  settingsSection: {
+    marginTop: 25,
+    width: '100%',
     alignItems: 'center',
-    marginBottom: 20,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
+    marginTop: 10,
   },
   settingText: {
-    fontSize: 18,
-    color: '#333333',
-    fontWeight: '600',
+    fontSize: 16,
+    color: '#333',
   },
 });

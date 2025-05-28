@@ -2,9 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './src/screens/HomeScreen';
 import GuíasScreen from './src/screens/GuíasScreen';
-import ProfileScreen from './src/screens/ProfileScreen';
-import PantallaDeteccionPlagas from './src/screens/PantallaDeteccionPlagas';
-import PantallaSiembraInteligente from './src/screens/DeteccionPlagas';
+import DeteccionPlagas from './src/screens/DeteccionPlagas';
 import LoginScreen from './src/screens/LoginScreen';
 import CosechaHidropónica from './src/screens/CosechaHidropónica';
 import RiegoHidropónico from './src/screens/RiegoHidropónico';
@@ -30,24 +28,11 @@ export default function App() {
           options={{
             headerShown: false,
           }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            headerShown: false,
-          }}
+       
         />
         <Stack.Screen
           name="DeteccionPlagas"
-          component={PantallaDeteccionPlagas}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SiembraInteligente"
-          component={PantallaSiembraInteligente}
+          component={DeteccionPlagas}
           options={{
             headerShown: false,
           }}
