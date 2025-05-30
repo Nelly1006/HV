@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, Linking, Switch, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, Alert, Switch } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { height } = Dimensions.get('window');
 
@@ -8,13 +10,33 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (email === 'user@hidrovida.com' && password === 'hidrovida123') {
-      Alert.alert('Éxito', '¡Has iniciado sesión en Hidrovida!');
+  const validateInput = () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Por favor, completa todos los campos.');
+      return false;
+    }
+    if (!email.includes('@')) {
+      Alert.alert('Error', 'Por favor, ingresa un correo válido.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleLogin = async () => {
+    if (!validateInput()) return;
+    setLoading(true);
+    try {
+      const response = await axios.post('http://192.168.1.64:5000/api/auth/login', { email, password });
+       
+      await AsyncStorage.setItem('token', response.data.token); // Guardar token
+      Alert.alert('Éxito', response.data.message || '¡Has iniciado sesión en Hidrovida!');
       navigation.navigate('Guías');
-    } else {
-      Alert.alert('Error', 'Correo o contraseña incorrectos');
+    } catch (err) {
+      Alert.alert('Error', err.response?.data?.message || 'Error al iniciar sesión');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -23,9 +45,18 @@ export default function LoginScreen({ navigation }) {
     navigation.navigate('Guías');
   };
 
-  const handleRegister = () => {
-    Alert.alert('Registro', 'Función de registro en desarrollo. Visita nuestro sitio para más información.');
-    Linking.openURL('https://hidrovida.com/register'); // Placeholder para el enlace real
+  const handleRegister = async () => {
+    if (!validateInput()) return;
+    setLoading(true);
+    try {
+      const response = await axios.post('http://192.168.1.64:5000/api/auth/register', { email, password });
+      await AsyncStorage.setItem('token', response.data.token); // Guardar token
+      Alert.alert('Éxito', response.data.message || 'Usuario registrado. Ahora puedes iniciar sesión.');
+    } catch (err) {
+      Alert.alert('Error', err.response?.data?.message || 'Error al registrarse');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -71,14 +102,22 @@ export default function LoginScreen({ navigation }) {
           secureTextEntry
           placeholderTextColor="#999"
         />
-        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+        <TouchableOpacity
+          onPress={handleLogin}
+          style={styles.loginButton}
+          disabled={loading}
+        >
           <LinearGradient colors={['#1A3C34', '#4CAF50']} style={styles.gradient}>
-            <Text style={styles.buttonText}>Iniciar Sesión</Text>
+            <Text style={styles.buttonText}>{loading ? 'Cargando...' : 'Iniciar Sesión'}</Text>
           </LinearGradient>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
+        <TouchableOpacity
+          onPress={handleRegister}
+          style={styles.registerButton}
+          disabled={loading}
+        >
           <LinearGradient colors={['#4CAF50', '#1A3C34']} style={styles.gradient}>
-            <Text style={styles.buttonText}>Registrarse</Text>
+            <Text style={styles.buttonText}>{loading ? 'Cargando...' : 'Registrarse'}</Text>
           </LinearGradient>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => Alert.alert('Opción', 'Función de "Olvidé mi contraseña" en desarrollo')}>
