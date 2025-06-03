@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, ImageBackground, Platform } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, ImageBackground, Platform, Image, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Animatable from 'react-native-animatable';
 import { Camera } from 'expo-camera';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
 const { height, width } = Dimensions.get('window');
 
@@ -11,36 +12,75 @@ export default function DeteccionPlagas() {
   const navigation = useNavigation();
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraVisible, setCameraVisible] = useState(false);
+  const [photo, setPhoto] = useState(null); // Estado para almacenar la foto tomada o seleccionada
+  const cameraRef = useRef(null); // Referencia para la cámara
 
-  // Solicitar permisos de cámara al cargar la pantalla
+  // Solicitar permisos de cámara y galería al cargar la pantalla
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
-      setHasPermission(status === 'granted');
+      console.log('Solicitando permisos de cámara...');
+      const { status: cameraStatus } = await Camera.requestCameraPermissionsAsync();
+      console.log('Solicitando permisos de galería...');
+      const { status: galleryStatus } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      console.log('Estado de permisos - Cámara:', cameraStatus, 'Galería:', galleryStatus);
+      setHasPermission(cameraStatus === 'granted' && galleryStatus === 'granted');
     })();
   }, []);
 
+  // Función para abrir la cámara
   const handleOpenCamera = async () => {
     if (hasPermission === null) {
       return alert('Solicitando permisos de cámara...');
     }
     if (hasPermission === false) {
-      return alert('No se tiene acceso a la cámara. Por favor, habilita los permisos en la configuración de tu dispositivo.');
+      return alert('No se tiene acceso a la cámara o galería. Por favor, habilita los permisos en la configuración de tu dispositivo.');
     }
     setCameraVisible(true);
   };
 
+  // Función para tomar una foto
   const handleTakePicture = async () => {
-    if (cameraVisible && cameraRef) {
-      const photo = await cameraRef.takePictureAsync();
-      console.log('Foto tomada:', photo.uri);
-      setCameraVisible(false);
-      // Aquí puedes agregar lógica para procesar la foto (e.g., enviar a un servidor para detección de plagas)
-      alert('Foto tomada con éxito. Procesando... (función en desarrollo)');
+    if (cameraVisible && cameraRef.current) {
+      try {
+        const photoData = await cameraRef.current.takePictureAsync();
+        console.log('Foto tomada:', photoData.uri);
+        setPhoto(photoData.uri); // Guardar la foto tomada
+        setCameraVisible(false);
+        alert('Foto tomada con éxito. Procesando... (función en desarrollo)');
+      } catch (err) {
+        console.error('Error al tomar foto:', err);
+        alert('Error al tomar la foto. Intenta de nuevo.');
+      }
     }
   };
 
-  let cameraRef = null;
+  // Función para seleccionar una foto desde la galería
+  const handleDetectByPhoto = async () => {
+    if (hasPermission === null) {
+      return alert('Solicitando permisos de galería...');
+    }
+    if (hasPermission === false) {
+      return alert('No se tiene acceso a la galería. Por favor, habilita los permisos en la configuración de tu dispositivo.');
+    }
+
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        console.log('Foto seleccionada:', result.assets[0].uri);
+        setPhoto(result.assets[0].uri); // Guardar la foto seleccionada
+        alert('Foto seleccionada con éxito. Procesando... (función en desarrollo)');
+      }
+    } catch (err) {
+      console.error('Error al seleccionar foto:', err);
+      Alert.alert('Error', 'No se pudo seleccionar la foto. Verifica los permisos de galería.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -58,7 +98,7 @@ export default function DeteccionPlagas() {
             <Camera
               style={styles.camera}
               type={Camera.Constants.Type.back}
-              ref={(ref) => (cameraRef = ref)}
+              ref={(ref) => (cameraRef.current = ref)}
             >
               <View style={styles.cameraButtonContainer}>
                 <TouchableOpacity onPress={() => setCameraVisible(false)} style={styles.closeCameraButton}>
@@ -92,7 +132,7 @@ export default function DeteccionPlagas() {
                   <Text style={styles.buttonText}>Abrir Cámara</Text>
                 </LinearGradient>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.optionButton} onPress={() => console.log('Detectar por Foto')}>
+              <TouchableOpacity style={styles.optionButton} onPress={handleDetectByPhoto}>
                 <LinearGradient
                   colors={['#2E7D32', '#66BB6A']}
                   style={styles.buttonGradient}
@@ -108,6 +148,11 @@ export default function DeteccionPlagas() {
                   <Text style={styles.buttonText}>Detectar por Síntomas</Text>
                 </LinearGradient>
               </TouchableOpacity>
+              {photo && (
+                <Animatable.View animation="fadeIn" duration={1000} delay={200}>
+                  <Image source={{ uri: photo }} style={styles.photoPreview} />
+                </Animatable.View>
+              )}
               <Text style={styles.infoText}>
                 Nota: La detección está en desarrollo. Usa la cámara para capturar imágenes y simular la detección.
               </Text>
@@ -260,5 +305,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FFFFFF',
     fontWeight: '600',
+  },
+  photoPreview: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginVertical: 20,
+    alignSelf: 'center',
   },
 });

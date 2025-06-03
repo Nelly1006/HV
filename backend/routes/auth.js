@@ -7,7 +7,7 @@ const User = require('../models/User');
 // Registro de usuario
 router.post('/register', async (req, res) => {
   const { email, password } = req.body;
-  console.log('Registro intentado:', { email, password });
+  console.log('Registro intentado:', { email, password }); // Añade este log
 
   try {
     let user = await User.findOne({ email });
