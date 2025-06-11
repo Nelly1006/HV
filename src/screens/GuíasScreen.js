@@ -103,7 +103,8 @@ export default function GuíasScreen({ navigation }) {
                     end={{ x: 1, y: 0 }}
                     style={styles.buttonGradient}
                   >
-                    <Text style={styles.buttonText}>Detectar Plagas</Text>
+                    <Text style={styles.buttonText}>Garza el guapo
+                      </Text>
                   </LinearGradient>
                 </Animated.View>
               </TouchableOpacity>
