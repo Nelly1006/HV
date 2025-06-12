@@ -28,7 +28,7 @@ export default function LoginScreen({ navigation }) {
     if (!validateInput()) return;
     setLoading(true);
     try {
-      const response = await axios.post('http://192.168.137.15:5000/api/auth/login', { email, password });
+      const response = await axios.post('http://192.168.1.72:5000/api/auth/login', { email, password });
        
       await AsyncStorage.setItem('token', response.data.token); // Guardar token
       Alert.alert('Éxito', response.data.message || '¡Has iniciado sesión en Hidrovida!');
@@ -44,16 +44,20 @@ export default function LoginScreen({ navigation }) {
     Alert.alert('Acceso de Invitado', 'Estás entrando como invitado. Algunas funciones estarán limitadas.');
     navigation.navigate('Guías');
   };
-
-  const handleRegister = async () => {
+  
+const handleRegister = async () => {
   try {
     console.log('Intentando registrar:', { email, password }); // Añade este log para depurar
-    const response = await axios.post('http://192.168.137.15:5000/api/auth/login', { email, password });
+    const response = await axios.post('http://192.168.1.72:5000/api/auth/register', { email, password });
     Alert.alert('Éxito', 'Usuario registrado');
     navigation.navigate('Guías');
   } catch (err) {
-    console.log('Error en registro:', err.response?.data); // Añade este log para depurar
-    Alert.alert('Error', err.response?.data?.message || 'Error al registrarse');
+    console.log('Error en registro:', {
+      message: err.message,
+      response: err.response?.data || 'Sin respuesta',
+      status: err.response?.status || 'Desconocido',
+    }); // Log detallado
+    Alert.alert('Error', err.response?.data?.message || err.message || 'Error al registrarse');
   }
 };
 
