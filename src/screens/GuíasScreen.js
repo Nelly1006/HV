@@ -103,7 +103,7 @@ export default function GuíasScreen({ navigation }) {
                     end={{ x: 1, y: 0 }}
                     style={styles.buttonGradient}
                   >
-                    <Text style={styles.buttonText}>Garza el guapo
+                    <Text style={styles.buttonText}>Detectar Plagas
                       </Text>
                   </LinearGradient>
                 </Animated.View>

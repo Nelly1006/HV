@@ -27,9 +27,6 @@
       "permissions": [
         "CAMERA",
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO",
-        "CAMERA",
-        "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
       "package": "com.anonymous.hidrovida"
@@ -44,6 +41,11 @@
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to detect pests."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "eb759cd4-9ef3-4760-b13d-9f7ea19311b8"
+      }
+    }
   }
 }
